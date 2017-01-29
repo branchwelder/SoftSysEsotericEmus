@@ -1,6 +1,6 @@
 # Sprint 1: Proposal
 
-## Goals
+## Goalss
 
 ### MVP
 
