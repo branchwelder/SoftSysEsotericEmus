@@ -1,6 +1,6 @@
 # Sprint 1: Proposal
 
-## Goals
+## Goalss
 
 ### MVP
 The minimal deliverable for this project will be an Arduino threading demo with visual outputs to show the capabilities of our threading library. We will first implement the basic functions of the C PThread library within our own library for Arduino. These functions will include creating, destroying, attaching, and detaching threads as well as initializing, destroying, locking, and unlocking mutexes.
