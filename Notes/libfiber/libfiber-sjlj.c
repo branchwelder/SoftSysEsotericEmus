@@ -8,6 +8,7 @@
 
 typedef struct
 {
+	// a fiber struct, just initializing variables for fibers
 	jmp_buf context;
 	void (*function)(void);
 	int active;
@@ -45,7 +46,6 @@ static void usr1handlerCreateStack( int signum )
 		fiberList[currentFiber].active = 0;
 		longjmp( mainContext, 1 );
 	}
-
 	return;
 }
 
@@ -58,7 +58,6 @@ void initFibers()
 		fiberList[i].function = 0;
 		fiberList[i].active = 0;
 	}
-
 	return;
 }
 
@@ -70,39 +69,58 @@ int spawnFiber( void (*func)(void) )
 	stack_t stack;
 	stack_t oldStack;
 
-	if ( numFibers == MAX_FIBERS ) return LF_MAXFIBERS;
+	if ( numFibers == MAX_FIBERS )
+		return LF_MAXFIBERS;
 
 	/* Create the new stack */
-	stack.ss_flags = 0;
-	stack.ss_size = FIBER_STACK;
-	stack.ss_sp = malloc( FIBER_STACK );
+	stack.ss_flags = 0; // The system should use the signal stack
+	stack.ss_size = FIBER_STACK; // size of the stack in bits
+	stack.ss_sp = malloc( FIBER_STACK ); // the base of the stack
 	if ( stack.ss_sp == 0 )
 	{
+		//if the stack doesn't exsist
 		LF_DEBUG_OUT( "Error: Could not allocate stack." );
 		return LF_MALLOCERROR;
 	}
+	//i'm a little fuzzy on this LF_DEBUG_OUT1 thing
 	LF_DEBUG_OUT1( "Stack address from malloc = %p", stack.ss_sp );
 #ifdef VALGRIND
-	/* Sadly, this *still* doesn't fix all warnings. */
+	/* registers a new stack, informs valgrind that the memory range
+	between start and end is a unique stack. returns a stackID that
+	assigned to an active fiber*/
 	fiberList[numFibers].stackId =
 		VALGRIND_STACK_REGISTER(stack.ss_sp, ((char*) stack.ss_sp + FIBER_STACK));
 #endif
 
-	/* Install the new stack for the signal handler */
+	/* Install the new stack for the signal handler. I think that this
+	returns an error if the new stack and old stack are in the same
+	location*/
 	if ( sigaltstack( &stack, &oldStack ) )
 	{
 		LF_DEBUG_OUT( "Error: sigaltstack failed." );
 		return LF_SIGNALERROR;
 	}
 
-	/* Install the signal handler */
+	/* Install the signal handler. sa_handler identifies the action
+	to be associated with the specified signal. If the sa_handler
+	field specifies a signal-catching function, the sa_mask field
+	identifies a set of signals that will be added to the process'
+	signal mask before the signal-catching function is invoked*/
 	/* Sigaction *must* be used so we can specify SA_ONSTACK */
 	handler.sa_handler = &usr1handlerCreateStack;
+	/*If the sa_handler field specifies a signal-catching
+	function, the sa_mask field identifies a set of signals that will
+	be added to the process' signal mask before the signal-catching function
+	is invoked*/
 	handler.sa_flags = SA_ONSTACK;
+	/*sigemptyset = initialise and empty a signal set*/
+	/*sa_mask = identifies a set of signals that will be added to the
+	process' signal mask before the signal-catching function is invoked*/
 	sigemptyset( &handler.sa_mask );
 
 	if ( sigaction( SIGUSR1, &handler, &oldHandler ) )
 	{
+		/*I think this is like checking if the handlers are the same*/
 		LF_DEBUG_OUT( "Error: sigaction failed." );
 		return LF_SIGNALERROR;
 	}
@@ -110,6 +128,8 @@ int spawnFiber( void (*func)(void) )
 	/* Call the handler on the new stack */
 	if ( raise( SIGUSR1 ) )
 	{
+		/*raise sends a signal to the program and if it's unsuccessful,
+		returns non-zero*/
 		LF_DEBUG_OUT( "Error: raise failed." );
 		return LF_SIGNALERROR;
 	}
@@ -118,7 +138,8 @@ int spawnFiber( void (*func)(void) )
 	sigaltstack( &oldStack, 0 );
 	sigaction( SIGUSR1, &oldHandler, 0 );
 
-	/* We now have an additional fiber, ready to roll */
+	/* We now have an additional fiber, ready to roll . Sets up
+	the fiber that is currently being worked on*/
 	fiberList[numFibers].active = 1;
 	fiberList[numFibers].function = func;
 	fiberList[numFibers].stack = stack.ss_sp;
@@ -132,7 +153,7 @@ void fiberYield()
 	/* If we are in a fiber, switch to the main context */
 	if ( inFiber )
 	{
-		/* Store the current state */
+		/* Stores the context of the current fiber */
 		if ( setjmp( fiberList[ currentFiber ].context ) )
 		{
 			/* Returning via longjmp (resume) */
@@ -162,6 +183,9 @@ void fiberYield()
 
 				free( fiberList[currentFiber].stack );
 #ifdef VALGRIND
+				/* registers a new stack, informs valgrind that the memory range
+				between start and end is a unique stack. returns a stackID that
+				assigned to an active fiber*/
 				VALGRIND_STACK_DEREGISTER(fiberList[currentFiber].stackId);
 #endif
 
@@ -169,6 +193,7 @@ void fiberYield()
 				-- numFibers;
 				if ( currentFiber != numFibers )
 				{
+					/*make sure you're actually using the right fiber*/
 					fiberList[ currentFiber ] = fiberList[ numFibers ];
 				}
 

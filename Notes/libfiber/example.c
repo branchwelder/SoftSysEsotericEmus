@@ -8,7 +8,7 @@ void fiber1()
 	int i;
 	for ( i = 0; i < 5; ++ i )
 	{
-		printf( "Hey, I'm fiber #: %d\n", i );
+		printf( "Hey, I'm fiber 1: %d\n", i );
 		fiberYield();
 	}
 	return;
