@@ -11,7 +11,7 @@ all: $(PROGRAMS)
 
 clean:
 	$(RM) *.o $(PROGRAMS) &> /dev/null || true
-
+	
 debug: clean
 	make "CC=gcc -g -Wall -pedantic -DLF_DEBUG"
 
@@ -24,8 +24,9 @@ example-uc: libfiber-uc.o example.o
 
 example-clone: libfiber-clone.o example.o
 	$(CC) $(LDFLAGS) libfiber-clone.o example.o -o example-clone
-em	 example.o
-	$(CC) $(LDFLAGS) libfiber-sjlj.o example.o -o example-sjlj #LDFLAGS is just -lm
+	
+example-sjlj: libfiber-sjlj.o example.o
+	$(CC) $(LDFLAGS) libfiber-sjlj.o example.o -o example-sjlj
 
 example-asm: libfiber-asm.o example.o
 	$(CC) $(LDFLAGS) libfiber-asm.o example.o -o example-asm

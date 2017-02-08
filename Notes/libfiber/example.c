@@ -1,46 +1,59 @@
 #include "libfiber.h"
 #include <stdio.h>
-
+#include <avr/io.h>
+#include <util/delay.h>
 #include <unistd.h>
 
-void fiber1()
+void blinkQuickly()
 {
-	int i;
-	for ( i = 0; i < 5; ++ i )
-	{
-		printf( "Hey, I'm fiber 1: %d\n", i );
-		fiberYield();
+	#define BLINK_DELAY_Q 100
+
+	/* set pin 5 of PORTB for output*/
+  DDRB |= _BV(DDB5);
+
+  while(1) {
+		/* set pin 5 high to turn led on */
+		PORTB |= _BV(PORTB5);
+		_delay_ms(BLINK_DELAY_Q);
+		/* set pin 5 low to turn led off */
+		PORTB &= ~_BV(PORTB5);
+		_delay_ms(BLINK_DELAY_Q);
 	}
-	return;
+	fiberYield()
 }
 
-void fibonacchi()
+void blinkMedium()
 {
-	int i;
-	int fib[2] = { 0, 1 };
+	#define BLINK_DELAY_M 1000
+	/* set pin 5 of PORTB for output*/
+	DDRB |= _BV(DDB5);
 
-	/*sleep( 2 ); */
-	printf( "fibonacchi(0) = 0\nfibonnachi(1) = 1\n" );
-	for( i = 2; i < 15; ++ i )
-	{
-		int nextFib = fib[0] + fib[1];
-		printf( "fibonacchi(%d) = %d\n", i, nextFib );
-		fib[0] = fib[1];
-		fib[1] = nextFib;
-		fiberYield();
+	while(1) {
+		/* set pin 5 high to turn led on */
+		PORTB |= _BV(PORTB5);
+		_delay_ms(BLINK_DELAY_M);
+		/* set pin 5 low to turn led off */
+		PORTB &= ~_BV(PORTB5);
+		_delay_ms(BLINK_DELAY_M);
 	}
+	fiberYield()
 }
 
-void squares()
+void blinkSlowly()
 {
-	int i;
+	#define BLINK_DELAY_S 10000
+		/* set pin 5 of PORTB for output*/
+  DDRB |= _BV(DDB5);
 
-	/*sleep( 5 ); */
-	for ( i = 0; i < 10; ++ i )
-	{
-		printf( "%d*%d = %d\n", i, i, i*i );
-		fiberYield();
+	  while(1) {
+		/* set pin 5 high to turn led on */
+		PORTB |= _BV(PORTB5);
+		_delay_ms(BLINK_DELAY_S);
+		/* set pin 5 low to turn led off */
+		PORTB &= ~_BV(PORTB5);
+		_delay_ms(BLINK_DELAY_S);
 	}
+	fiberYield()
 }
 
 int main()
@@ -49,9 +62,9 @@ int main()
 	initFibers();
 
 	/* Go fibers! */
-	spawnFiber( &fiber1 );
-	spawnFiber( &fibonacchi );
-	spawnFiber( &squares );
+	spawnFiber( &blinkQuickly );
+	spawnFiber( &blinkMedium );
+	spawnFiber( &blinkSlowly );
 
 	/* Since these are nonpre-emptive, we must allow them to run */
 	waitForAllFibers();
