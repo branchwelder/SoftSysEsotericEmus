@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <avr/io.h>
 #include <util/delay.h>
-#include <unistd.h>
+//#include <unistd.h>
 
 void blinkQuickly()
 {
@@ -19,7 +19,7 @@ void blinkQuickly()
 		PORTB &= ~_BV(PORTB5);
 		_delay_ms(BLINK_DELAY_Q);
 	}
-	fiberYield()
+	fiberYield();
 }
 
 void blinkMedium()
@@ -36,7 +36,7 @@ void blinkMedium()
 		PORTB &= ~_BV(PORTB5);
 		_delay_ms(BLINK_DELAY_M);
 	}
-	fiberYield()
+	fiberYield();
 }
 
 void blinkSlowly()
@@ -53,7 +53,7 @@ void blinkSlowly()
 		PORTB &= ~_BV(PORTB5);
 		_delay_ms(BLINK_DELAY_S);
 	}
-	fiberYield()
+	fiberYield();
 }
 
 int main()
