@@ -36,8 +36,7 @@ static void usr1handlerCreateStack( int signum )
 	assert( signum == SIGUSR1 );
 	LF_DEBUG_OUT1( "Signal handler for fiber %d", numFibers );
 
-	/* Save the current context, and return to terminate the signal
-	handler scope */
+	/* Save the current context, and return to terminate the signal handler scope */
 	if ( setjmp( fiberList[numFibers].context ) )
 	{
 		/* We are being called again from the main context. Call the function */
