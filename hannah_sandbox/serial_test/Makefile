@@ -12,6 +12,7 @@ MCU=atmega328p
 CFLAGS=-I. -I$(PCA_PREFIX)/include/ -Wall -Os -DF_CPU=16000000UL -std=c99
 LDFLAGS=-lpca -L$(PCA_PREFIX)
 
+# Update this line with your Arduino's port:
 ISPPORT=/dev/cu.usbmodem1411
 ISPDIR=/usr/local/bin
 ISP=$(ISPDIR)/avrdude
