@@ -47,7 +47,9 @@ Building on our understanding of threading and compilation capabilities on the A
 * Yielding between threads
 * Destroying threads
 
-![emufib Library Results](/images/emufib.png "Working example of the emufib library.")
+The library is located [here](https://github.com/hannahtwiggsmith/SoftSysEsotericEmus/tree/master/emufib).  And the image below shows a working demo of the test file.
+
+![emufib Library Results](./reports/images/emufib.png "Working example of the emufib library.")
 
 Because testing on our individual machines was successful, we will focus this coming sprint on porting our library over to the Arduino as well as adding further thread and mutex capabilities.  In order to make this happen, we are working on manipulating the Arduino memory to properly allocate multiple stacks for threads.  We are also adding functionality such as yielding to our thread definitions, and writing a mutex definition that includes creating, locking, and unlocking mutexes.
 
