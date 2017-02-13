@@ -17,7 +17,6 @@ typedef struct
 
 /* The fiber "queue" */
 static fiber fiberList[ MAX_FIBERS ];
-
 /* The index of the currently executing fiber */
 static int currentFiber = -1;
 /* A boolean flag indicating if we are in the main process or if we are in a fiber */
@@ -56,31 +55,31 @@ void fiberYield()
 	else
 	{
 		if ( numFibers == 0 ) return;
-	
+
 		/* Saved the state so call the next fiber */
 		currentFiber = (currentFiber + 1) % numFibers;
-		
+
 		LF_DEBUG_OUT1( "Switching to fiber %d.", currentFiber );
 		inFiber = 1;
 		asm_switch( &fiberList[ currentFiber ], &mainFiber, 0 );
 		inFiber = 0;
 		LF_DEBUG_OUT1( "Fiber %d switched to main context.", currentFiber );
-		
+
 		if ( fiberList[currentFiber].active == 0 )
 		{
 			LF_DEBUG_OUT1( "Fiber %d is finished. Cleaning up.\n", currentFiber );
 			/* Free the "current" fiber's stack */
 			free( fiberList[currentFiber].stack_bottom );
-			
+
 			/* Swap the last fiber with the current, now empty, entry */
-			-- numFibers;
+			--numFibers;
 			if ( currentFiber != numFibers )
 			{
 				fiberList[ currentFiber ] = fiberList[ numFibers ];
 			}
 			fiberList[ numFibers ].active = 0;
 		}
-		
+
 	}
 	return;
 }
@@ -98,25 +97,25 @@ int spawnFiber( void (*func)(void) )
 	}
 	fiberList[numFibers].active = 1;
 	++ numFibers;
-	
+
 	return LF_NOERROR;
 }
 
 int waitForAllFibers()
 {
 	int fibersRemaining = 0;
-	
+
 	/* If we are in a fiber, wait for all the *other* fibers to quit */
 	if ( inFiber ) fibersRemaining = 1;
-	
+
 	LF_DEBUG_OUT1( "Waiting until there are only %d threads remaining...", fibersRemaining );
-	
+
 	/* Execute the fibers until they quit */
 	while ( numFibers > fibersRemaining )
 	{
 		fiberYield();
 	}
-	
+
 	return LF_NOERROR;
 }
 
