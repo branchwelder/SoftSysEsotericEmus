@@ -96,7 +96,7 @@ int createThread( void (*func)(void) )
 	createStack( &threadList[numThreads], THREAD_STACK, func );
 	if ( threadList[numThreads].stack_bottom == 0 )
 	{
-		printf( "Error: Could not allocate stack." );
+		printf( "Error: Could not allocate stack. \n" );
 		return 2; /* Malloc error */
 	}
 	threadList[numThreads].active = 1;
@@ -112,7 +112,7 @@ void threadYield()
 	if ( inThread )
 	{
 		/* Switch to the main context */
-		printf( "emufib debug: Thread %d yielding the processor...", currentThread );
+		printf( "Thread %d yielding the processor. \n", currentThread );
 
 		asm_switch( &mainThread, &threadList[currentThread], 0 );
 	}
@@ -124,11 +124,11 @@ void threadYield()
 		/* Saved the state so call the next fiber */
 		currentThread = (currentThread + 1) % numThreads;
 		
-		printf( "Switching to thread %d.", currentThread );
+		printf( "Switching to thread %d. \n", currentThread );
 		inThread = 1;
 		asm_switch( &threadList[ currentThread ], &mainThread, 0 );
 		inThread = 0;
-		printf( "Thread %d switched to main context.", currentThread );
+		printf( "Thread %d switched to main context. \n", currentThread );
 		
 		if ( threadList[currentThread].active == 0 )
 		{
@@ -157,7 +157,7 @@ int waitForAllThreads()
 	/* If we are in a fiber, wait for all the *other* fibers to quit */
 	if ( inThread ) threadsRemaining = 1;
 	
-	printf( "Waiting until there are only %d threads remaining...", threadsRemaining );
+	printf( "Waiting until there are only %d threads remaining. \n", threadsRemaining );
 	
 	/* Execute the fibers until they quit */
 	while ( numThreads > threadsRemaining )
