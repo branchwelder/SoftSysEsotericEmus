@@ -84,6 +84,7 @@ void initThreads()
 	memset(threadList, 0, sizeof(threadList));
 	mainThread.stack = NULL;
 	mainThread.stack_bottom = NULL;
+	printf ("Initialized successfully.\n");
 }
 
 // Create Threads
@@ -100,8 +101,71 @@ int createThread( void (*func)(void) )
 	}
 	threadList[numThreads].active = 1;
 	++ numThreads;
-	
+
 	return 0; /* No error */
+}
+
+/* Context switching: REPLACE WITH ARDUINO VERSION */
+void threadYield()
+{
+	/* If we are in a thread, switch to the main process */
+	if ( inThread )
+	{
+		/* Switch to the main context */
+		printf( "emufib debug: Thread %d yielding the processor...", currentThread );
+
+		asm_switch( &mainThread, &threadList[currentThread], 0 );
+	}
+	/* Else, we are in the main process and we need to dispatch a new fiber */
+	else
+	{
+		if ( numThreads == 0 ) return;
+	
+		/* Saved the state so call the next fiber */
+		currentThread = (currentThread + 1) % numThreads;
+		
+		printf( "Switching to thread %d.", currentThread );
+		inThread = 1;
+		asm_switch( &threadList[ currentThread ], &mainThread, 0 );
+		inThread = 0;
+		printf( "Thread %d switched to main context.", currentThread );
+		
+		if ( threadList[currentThread].active == 0 )
+		{
+			printf( "Thread %d is finished. Cleaning up.\n", currentThread );
+			/* Free the "current" fiber's stack pointer */
+			free( threadList[currentThread].stack_bottom );
+			
+			/* Swap the last fiber with the current, now empty, entry */
+			-- numThreads;
+			if ( currentThread != numThreads )
+			{
+				threadList[ currentThread ] = threadList[ numThreads ];
+			}
+			threadList[ numThreads ].active = 0;
+		}
+		
+	}
+	return;
+}
+
+/* Let threads run after creation */
+int waitForAllThreads()
+{
+	int threadsRemaining = 0;
+	
+	/* If we are in a fiber, wait for all the *other* fibers to quit */
+	if ( inThread ) threadsRemaining = 1;
+	
+	printf( "Waiting until there are only %d threads remaining...", threadsRemaining );
+	
+	/* Execute the fibers until they quit */
+	while ( numThreads > threadsRemaining )
+	{
+		threadYield();
+	}
+	
+	return 0;
 }
 
 // Destroy Threads
@@ -118,6 +182,7 @@ void destroyThread() {
 
 
 /* DEFINE ARCHITECTURE PARAMS */
+/* REPLACE WITH ARDUINO VERSION */
 asm(".globl " ASM_PREFIX "asm_call_thread_exit\n"
 ASM_PREFIX "asm_call_thread_exit:\n"
 /*"\t.type asm_call_thread_exit, @function\n"*/
