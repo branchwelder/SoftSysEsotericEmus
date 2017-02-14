@@ -54,10 +54,9 @@ The library is located [here](https://github.com/hannahtwiggsmith/SoftSysEsoteri
 Because testing on our individual machines was successful, we will focus this coming sprint on porting our library over to the Arduino as well as adding further thread and mutex capabilities.  In order to make this happen, we are working on manipulating the Arduino memory to properly allocate multiple stacks for threads.  We are also adding functionality such as yielding to our thread definitions, and writing a mutex definition that includes creating, locking, and unlocking mutexes.
 
 Due to overcoming the Arduino communication and compilation roadblocks from this past sprint, we should be able to demonstrate both our MVP and at least one stretch goal at the end of sprint 3.
+![Serial port communication](./images/serial.jpg "Serial port communication.")
 
 ## Resources for Future Work
-
-Annotated Bibliography
 
 https://github.com/dagon666/avr_Libpca
 This library allows us to include functionality that would be given to us by the Arduino IDE in pure C.
