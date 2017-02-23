@@ -28,6 +28,8 @@ typedef struct
 	int active;
 } thread;
 
+
+
 /* THREAD PARAMS */
 /* Queue of threads to init */
 static thread threadList[ MAX_THREADS ];
@@ -46,13 +48,19 @@ extern int asm_switch(thread* next, thread* current, int return_value);
 static void initStack(thread* thread, int stack_size, void (*fptr)(void));
 extern void* asm_call_thread_exit;
 
+
+
 /* THREAD FUNCTIONS */
 /* Create Stacks */
 static void createStack(thread* thread, int stack_size, void (*fptr)(void)) {
 	int i;
-
-		static const int NUM_REGISTERS = 32;
-
+	#ifdef __x86_64
+		/* x86-64: rbx, rbp, r12, r13, r14, r15 */
+		static const int NUM_REGISTERS = 6;
+	#else
+		/* x86: ebx, ebp, edi, esi */
+		static const int NUM_REGISTERS = 4;
+	#endif
 		assert(stack_size > 0);
 		assert(fptr != NULL);
 
@@ -170,6 +178,8 @@ void destroyThread() {
 	/* asm_switch should never return for an exiting thread. */
 	abort();
 }
+
+
 
 /* DEFINE ARCHITECTURE PARAMS */
 /* REPLACE WITH ARDUINO VERSION */
