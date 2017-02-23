@@ -14,8 +14,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "threads.h"
-
 
 
 /* THREAD DEFS */
