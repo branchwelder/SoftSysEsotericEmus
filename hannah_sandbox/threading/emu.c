@@ -93,17 +93,11 @@ struct task_cb* aos_task_create(task_proc_t a_task_proc, size_t a_stack) {
 	cb->ctx.sp->pc.pc8.lo = ((uint16_t)_aos_task_launcher >> 8) & 0xff;
 	cb->ctx.sp->pc.pc8.hi = ((uint16_t)_aos_task_launcher) & 0xff;
 
-	// suspended initially
-	aos_task_priority_set(cb, a_prio);
+	// mark as suspended
+	aos_task_state_set(cb, AOS_TASK_SUSPENDED);
 
-	// if it's not an IDLE task, then add it to run-list
-	if (AOS_TASK_PRIORITY_IDLE != a_prio) {
-		// mark as suspended
-		aos_task_state_set(cb, AOS_TASK_SUSPENDED);
-
-		// add to run list
-		aos_sched_task_resume(cb);
-	}
+	// add to run list
+	aos_sched_task_resume(cb);
 
 	AOS_UNLOCK();
 	return cb;

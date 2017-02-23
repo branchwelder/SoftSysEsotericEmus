@@ -30,6 +30,28 @@ void run();
  * Declares task control block and task related routines and interface
  */
 
+ /**
+  * @brief possible state in which task can reside
+  */
+ typedef enum _aos_task_state_t {
+ 	/// task has been explicitly suspended from execution - it will not be scheduled
+ 	AOS_TASK_SUSPENDED = 0,
+
+ 	/// task is ready to be executed, waiting for it's time slice
+ 	AOS_TASK_READY,
+
+ 	/// task is currently running
+ 	AOS_TASK_RUNNING,
+
+ 	/// task is pauzed, it either wait's for hardware or for semaphore
+ 	AOS_TASK_PAUZED,
+
+ 	/// task has ended up, it won't be scheduled any more.
+ 	AOS_TASK_STOPPED,
+
+ 	/// used to count the number of stack states
+ 	AOS_TASK_STATE_LAST
+ } aos_task_state_t;
 
 // ================================================================================
 
@@ -63,12 +85,6 @@ struct task_cb {
 	struct task_cb *prv, *nxt;
 
 	/// holds current stack pointer, and reference to machine state
-
-	/// task priority / task state combined field
-	uint8_t prio_state;
-
-	/// number of time quanta's task can consume
-	uint8_t quanta;
 
 	/// task execution handler
 	task_proc_t proc;
@@ -105,15 +121,6 @@ struct task_cb* aos_task_create(task_proc_t a_task_proc, size_t a_stack);
 
 
 /**
- * @brief configures task priority to a given value
- *
- * @param a_task task which priority will be changed
- * @param a_prio priority
- */
-void aos_task_priority_set(struct task_cb *a_task, uint8_t a_prio);
-
-
-/**
  * @brief set task state
  *
  * This function shouldn't be used outside of the system.
@@ -122,16 +129,6 @@ void aos_task_priority_set(struct task_cb *a_task, uint8_t a_prio);
  * @param a_state state
  */
 void aos_task_state_set(struct task_cb *a_task, uint8_t a_state);
-
-
-/**
- * @brief return the priority of a specified task
- *
- * @param a_task task to be examined
- *
- * @return priority
- */
-uint8_t aos_task_priority_get(struct task_cb *a_task);
 
 
 /**
