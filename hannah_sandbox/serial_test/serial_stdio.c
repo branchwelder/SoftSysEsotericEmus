@@ -11,7 +11,7 @@ int main(void)
 	serial_install_stdio();
 
 	while(1) {
-		printf("EsotericEmus test. Line: [%d]\n", cnt++);
+		printf("EsotericEmus tessdft. Line: [%d]\n", cnt++);
 		_delay_ms(1000);
 	}
 

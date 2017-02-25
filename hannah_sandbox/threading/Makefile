@@ -1,15 +1,18 @@
 TARGET=test
-SOURCES=test.c
+SOURCES=test.c emu.c
+
+
 DEPS=
 COBJ=$(SOURCES:.c=.o)
+PCA_PREFIX=../pca
 
 CC=avr-gcc
 OBJC=avr-objcopy
 MCU=atmega328p
-CFLAGS=-I. -Wall -Os -DF_CPU=16000000UL
-LDFLAGS=
+CFLAGS=-I. -I$(PCA_PREFIX)/include/ -Wall -Os -DF_CPU=16000000UL -std=c99
+LDFLAGS=-lpca -L$(PCA_PREFIX)
 
-ISPPORT=/dev/tty/cu.usbmodem1411
+ISPPORT=/dev/cu.usbmodem1411
 ISPDIR=/usr/local/bin
 ISP=$(ISPDIR)/avrdude
 ISPFLAGS=-c arduino -p $(MCU) -P $(ISPPORT) -b 115200 -C $(ISPDIR)/avrdude.conf
@@ -19,6 +22,10 @@ all: $(TARGET)
 %.o: %.c $(DEPS)
 	@echo -e "\tCC" $<
 	@$(CC) -mmcu=$(MCU) -c -o $@ $< $(CFLAGS)
+
+libpca.a:
+	@echo -e "\tBUILDING PURE C ARDUINO LIB"
+	$(MAKE) -C $(PCA_PREFIX)
 
 $(TARGET): $(COBJ)
 	@echo -e "\tLINKING CC" $<

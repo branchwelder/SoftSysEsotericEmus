@@ -1,5 +1,5 @@
-
 #include <stdlib.h>
+#include <stdio.h>
 
 /**
  * @brief initialize the system
@@ -76,30 +76,6 @@ void run();
 typedef void (*task_proc_t)(void *a_data);
 
 
-/**
- * @brief task context block
- */
-struct task_cb {
-
-	/// task list pointers must be on top
-	struct task_cb *prv, *nxt;
-
-	/// holds current stack pointer, and reference to machine state
-
-	/// task execution handler
-	task_proc_t proc;
-
-	/// number of systicks consumed by the task
-
-	/// work area size
-	uint16_t wa_size;
-
-	/// work area pointer
-	void *wa;
-
-	/// task private data
-	void *pdata;
-};
 
 
 // ================================================================================
@@ -187,6 +163,62 @@ struct aos_ctx {
 	 * @brief this pointer will be updated to current stack pointer value
 	 */
 	volatile struct aos_machine_ctx *sp;
+};
+
+
+/**
+ * @brief task context block
+ */
+struct task_cb {
+
+	/// task list pointers must be on top
+	struct task_cb *prv, *nxt;
+
+	/// holds current stack pointer, and reference to machine state
+	struct aos_ctx ctx;
+
+
+	/// task execution handler
+	task_proc_t proc;
+
+	/// number of systicks consumed by the task
+
+	/// work area size
+	uint16_t wa_size;
+
+	/// work area pointer
+	void *wa;
+
+};
+
+/**
+ * @brief system state descriptor
+ */
+struct aos_sys {
+
+	/**
+	 * @brief holds global stack pointer and system context
+	 *  maybe useful for doing a task fork implementation
+	 */
+	volatile struct aos_ctx ctx;
+	/// task currently scheduled
+	struct task_cb *current;
+
+	/**
+	 * @verbatim
+     *
+	 * 	         | B |  A
+	 * - - - - - | - | - -
+	 * 7 6 5 4 3 | 2 | 1 0
+	 * -------------------
+	 *
+	 * A - System Status
+	 * B - ISR interrupted flag
+	 *
+	 * @endverbatim
+	 */
+	/// system status register
+	uint8_t status;
 };
 
 
