@@ -10,6 +10,11 @@
 struct task_cb *task1_ptr = NULL;
 
 void task1() {
+	serial_init(E_BAUD_9600);
+	serial_install_interrupts(E_FLAGS_SERIAL_RX_INTERRUPT);
+	serial_flush();
+	serial_install_stdio();
+	printf("HEEEELLLLLLL\n");
 	while (1) {
 		printf("Task 1\n");
 	}

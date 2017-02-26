@@ -38,10 +38,15 @@ static void _aos_idle_task() {
 
 
 
+
 void _aos_task_exit(void) {
-	// we will land up here if the task will exit suddenly
-  printf("Inside task_exit.\n");
-  //while (1);
+  // call the task exit hook
+  //_aos_common_hook_exec(AOS_HOOK_TASK_EXIT);
+
+  printf("Inside task exit\n");
+
+  // we will land up here if the task will exit suddenly
+  while (1);
 }
 
 void init() {
@@ -107,7 +112,7 @@ struct task_cb* aos_task_create(task_proc_t a_task_proc, size_t a_stack) {
 	// setup initial context
 	// callback
 	cb->ctx.sp->r[2]  = ((uint16_t)a_task_proc) & 0xff;
-  	cb->ctx.sp->r[3]  = ((uint16_t)a_task_proc >> 8) & 0xff;
+  cb->ctx.sp->r[3]  = ((uint16_t)a_task_proc >> 8) & 0xff;
 
 	// read status register
 	cb->ctx.sp->sreg = SREG;
@@ -140,17 +145,14 @@ void run() {
 	printf("About to jump to first task.\n");
 
 	// jump to first task
-	int ret;
-	__asm__ volatile ("ret" ::);
-	printf("ret: %d\n", ret);
-
-	//printf("%i\n", blah);
+	AOS_CTX_POP_PC();
 
 	printf("POP\n");
 }
 
 __inline__
 void aos_task_state_set(struct task_cb *a_task, uint8_t a_state) {
+	printf("Inside aos task state set.\n");
 	a_task->prio_state &= 0xf0;
 	a_task->prio_state |= (a_state & 0x0f);
 }
@@ -158,11 +160,14 @@ void aos_task_state_set(struct task_cb *a_task, uint8_t a_state) {
 
 __attribute__((naked))
 static void _aos_task_launcher(void) {
+	printf("Inside aos task launcher.\n");
   __asm__ volatile ("movw    r24, r4");
   __asm__ volatile ("movw    r30, r2");
+
+	printf("right before icall.\n");
   __asm__ volatile ("icall");
   // task is running now
-
+	printf("after icall.\n");
   __asm__ volatile ("call _aos_task_exit");
 }
 
@@ -170,6 +175,7 @@ static void _aos_task_launcher(void) {
 
 __inline__
 aos_sys_status_t aos_common_sys_state_get() {
+	printf("Inside aos common sys state get.\n");
 	return (_g_sys.status & 0x03);
 }
 
