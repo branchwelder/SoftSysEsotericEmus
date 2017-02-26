@@ -77,6 +77,26 @@ typedef void (*task_proc_t)(void *a_data);
 
 
 
+/**
+ * @brief system status definition
+ */
+typedef enum _aos_sys_status_t {
+	/// aos_init has not been called yet, system is in unknown condition
+	AOS_SYS_UNINITIALIZED = 0,
+
+	/// aos_init has been called, system is ready
+	AOS_SYS_READY,
+
+	/// aos_run has been called, tasks are running
+	AOS_SYS_RUNNING,
+
+	/// system is halted due to internal error
+	AOS_SYS_HALTED,
+
+	/// used to determine the state count
+	AOS_SYS_STATUS_LAST
+} aos_sys_status_t;
+
 
 // ================================================================================
 
@@ -197,6 +217,39 @@ struct task_cb {
 };
 
 /**
+ * @brief defines the system run-list
+ */
+struct aos_run_list {
+
+	/**
+	 * @brief defines a separate list for each priority, grouping the tasks of same priorities
+	 *
+	 * There are two run-lists. The active and expired one. The active list is selected by the
+	 * active field. The scheduler works in a way that it schedules the task in priority order
+	 * from the active list and moves them to the expired list once they're time quanta goes down
+	 * to zero. Once there are no tasks available in the active list the active variable is switched to
+	 * select the expired list as the active one (active = (active + 1) & 0x01).
+	 *
+	 */
+
+	/**
+	 * @brief idle task
+	 */
+	struct task_cb *idle;
+
+	/**
+	 * @brief contains tasks which are either paused or suspended
+	 */
+	struct task_cb *wait;
+
+	/**
+	 * @brief defines the active & expired lists
+	 */
+	uint8_t active;
+};
+
+
+/**
  * @brief system state descriptor
  */
 struct aos_sys {
@@ -206,8 +259,15 @@ struct aos_sys {
 	 *  maybe useful for doing a task fork implementation
 	 */
 	volatile struct aos_ctx ctx;
+
 	/// task currently scheduled
 	struct task_cb *current;
+
+	/// system run-list
+	struct aos_run_list rl;
+
+	/// list of timers if there are any
+	struct aos_timer *timers;
 
 	/**
 	 * @verbatim
@@ -225,6 +285,7 @@ struct aos_sys {
 	/// system status register
 	uint8_t status;
 };
+
 
 
 /**

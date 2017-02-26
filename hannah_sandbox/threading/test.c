@@ -12,12 +12,14 @@ struct task_cb *task1_ptr = NULL;
 void task1() {
 	while (1) {
 		printf("Task 1\n");
-	}	
+	}
 }
 
 
 void task2() {
-	printf("Task 2\n");
+	while (1) {
+		printf("Task 2\n");
+	}
 }
 
 
@@ -36,7 +38,7 @@ int main(void) {
 	printf("System initialized.\n");
 
 	// create tasks
-	task1_ptr = aos_task_create(task1, 32);
+	aos_task_create(task1, 32);
 	aos_task_create(task2, 32);
 
 	printf("Created tasks.\n");
