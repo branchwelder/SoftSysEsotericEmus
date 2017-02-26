@@ -177,11 +177,14 @@ struct task_cb {
 	/// holds current stack pointer, and reference to machine state
 	struct aos_ctx ctx;
 
+	/// task priority / task state combined field
+	uint8_t prio_state;
+
+	/// number of time quanta's task can consume
+	uint8_t quanta;
 
 	/// task execution handler
 	task_proc_t proc;
-
-	/// number of systicks consumed by the task
 
 	/// work area size
 	uint16_t wa_size;
@@ -189,6 +192,8 @@ struct task_cb {
 	/// work area pointer
 	void *wa;
 
+	/// task private data
+	void *pdata;
 };
 
 /**

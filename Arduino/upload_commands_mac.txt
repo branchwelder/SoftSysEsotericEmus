@@ -4,4 +4,4 @@ avr-gcc -mmcu=atmega328p led.o -o led
 
 avr-objcopy -O ihex -R .eeprom led led.hex
 
-avrdude -F -V -c arduino -p ATMEGA328P -P /dev/cu.usbmodem1411 -b 115200 -U flash:w:led.hex
+avrdude -F -V -c arduino -p ATMEGA328P -P /dev/cu.usbmodem1411 -b 115200 -U flash:w:test.hex

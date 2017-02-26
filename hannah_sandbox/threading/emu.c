@@ -35,8 +35,8 @@ void init() {
 	printf("Creating and storing system stack pointer value...\n");
 	// store system stack pointer value
 	_g_sys.ctx.sp = (struct aos_machine_ctx *)SP;
+	printf("%d\n", _g_sys.ctx.sp->pc.pc16);
 	printf("Success!\n");
-
 }
 
 struct task_cb* aos_task_create(task_proc_t a_task_proc, size_t a_stack) {
@@ -81,18 +81,25 @@ struct task_cb* aos_task_create(task_proc_t a_task_proc, size_t a_stack) {
 
 void run() {
 	printf("Inside run!\n");
-	printf("_g_sys.current: %s\n", _g_sys.current);
+	printf("_g_sys.current: \n");
 
 	// set sp to current task's context and restore it
 	AOS_CTX_SP_SET(_g_sys.current);
-	printf("Set sp to current task's context.\n");
+
+	printf("About to save context\n");
+	AOS_CTX_SAVE();
+
+  //printf("%d\n", _g_sys.ctx.sp->r);
+
+	printf("Restore SP\n");
+
 	AOS_CTX_RESTORE();
-	printf("Restore sp.\n");
 
 	printf("About to jump to first task.\n");
 	// jump to first task
 	AOS_CTX_POP_PC();
 
+	printf("POP\n");
 }
 
 __inline__
