@@ -113,7 +113,7 @@ typedef enum _aos_sys_status_t {
  *
  * @return task control block
  */
-struct task_cb* aos_task_create(task_proc_t a_task_proc, size_t a_stack);
+struct task_cb* aos_task_create(task_proc_t a_task_proc, void *a_pdata, size_t a_stack);
 
 
 /**

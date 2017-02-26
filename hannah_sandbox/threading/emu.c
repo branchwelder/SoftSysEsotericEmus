@@ -21,7 +21,7 @@ void _aos_common_sys_state_set(aos_sys_status_t a_state) {
  *
  * @param a_data private data for the task
  */
-static void _aos_idle_task() {
+static void _aos_idle_task(void *a_pdata) {
 
 	// busy loop
 	while (1) {
@@ -63,7 +63,7 @@ void init() {
 
 
 	// create idle task
-	_g_sys.current = aos_task_create(_aos_idle_task, 32);
+	_g_sys.current = aos_task_create(_aos_idle_task, NULL, 32);
 
 	// setup as idle task
 	_g_sys.rl.idle = _g_sys.current;
@@ -81,7 +81,7 @@ void init() {
 	printf("Initialization success!\n");
 }
 
-struct task_cb* aos_task_create(task_proc_t a_task_proc, size_t a_stack) {
+struct task_cb* aos_task_create(task_proc_t a_task_proc, void *a_pdata, size_t a_stack) {
 
 	printf("Inside task_create!\n");
 
@@ -113,6 +113,10 @@ struct task_cb* aos_task_create(task_proc_t a_task_proc, size_t a_stack) {
 	// callback
 	cb->ctx.sp->r[2]  = ((uint16_t)a_task_proc) & 0xff;
   cb->ctx.sp->r[3]  = ((uint16_t)a_task_proc >> 8) & 0xff;
+
+	// arguments
+	cb->ctx.sp->r[4]  = ((uint16_t)a_pdata) & 0xff;
+	cb->ctx.sp->r[5]  = ((uint16_t)a_pdata >> 8) & 0xff;
 
 	// read status register
 	cb->ctx.sp->sreg = SREG;
@@ -161,9 +165,10 @@ void aos_task_state_set(struct task_cb *a_task, uint8_t a_state) {
 __attribute__((naked))
 static void _aos_task_launcher(void) {
 	printf("Inside aos task launcher.\n");
-  __asm__ volatile ("movw    r24, r4");
-  __asm__ volatile ("movw    r30, r2");
+  __asm__ volatile ("movw   r24, r4");
+  __asm__ volatile ("movw   r30, r2");
 
+	//printf("r30: %s\n");
 	printf("right before icall.\n");
   __asm__ volatile ("icall");
   // task is running now
