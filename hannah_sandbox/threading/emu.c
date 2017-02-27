@@ -25,15 +25,9 @@ static void _aos_idle_task(void *a_pdata) {
 
 	// busy loop
 	while (1) {
-
-#if AOS_SCHED_TIMER == 2
-		// if TIMER2 is used we can sleep the core
-		set_sleep_mode(SLEEP_MODE_IDLE);
-		sleep_enable();
-		sleep_cpu();
-		sleep_disable();
-#endif
+		//printf("in idle task\n");
 	}
+
 }
 
 
@@ -87,19 +81,14 @@ struct task_cb* aos_task_create(task_proc_t a_task_proc, void *a_pdata, size_t a
 
 	uint16_t blk_size = AOS_CALC_TASK_WA_SIZE(a_stack);
 
-	printf("blk_size: %d\n", blk_size);
-
 	struct task_cb *cb = (struct task_cb *)malloc(blk_size);
 
 	memset(cb, 0x00, blk_size);
-
 	cb->wa = (void *)((uint8_t *)cb + sizeof(struct task_cb));
 	cb->wa_size = (blk_size - sizeof(struct task_cb));
 
-	printf("wa_size: %d\n", cb->wa_size);
-
-	// The actual task/function passed in
 	cb->proc = a_task_proc;
+	cb->pdata = a_pdata;
 
 	// initialize stack pointer
 	cb->ctx.sp = (struct aos_machine_ctx *)((uint8_t *)cb +
@@ -107,16 +96,14 @@ struct task_cb* aos_task_create(task_proc_t a_task_proc, void *a_pdata, size_t a
 			AOS_MACHINE_CTX_SIZE() -
 			AOS_IRQ_CTX_SIZE());
 
-	//printf("stack pointer: %d", cb->ctx.sp);
-
 	// setup initial context
 	// callback
 	cb->ctx.sp->r[2]  = ((uint16_t)a_task_proc) & 0xff;
-  cb->ctx.sp->r[3]  = ((uint16_t)a_task_proc >> 8) & 0xff;
+  	cb->ctx.sp->r[3]  = ((uint16_t)a_task_proc >> 8) & 0xff;
 
 	// arguments
-	cb->ctx.sp->r[4]  = ((uint16_t)a_pdata) & 0xff;
-	cb->ctx.sp->r[5]  = ((uint16_t)a_pdata >> 8) & 0xff;
+  	cb->ctx.sp->r[4]  = ((uint16_t)a_pdata) & 0xff;
+  	cb->ctx.sp->r[5]  = ((uint16_t)a_pdata >> 8) & 0xff;
 
 	// read status register
 	cb->ctx.sp->sreg = SREG;
@@ -125,8 +112,6 @@ struct task_cb* aos_task_create(task_proc_t a_task_proc, void *a_pdata, size_t a
 	cb->ctx.sp->pc.pc8.lo = ((uint16_t)_aos_task_launcher >> 8) & 0xff;
 	cb->ctx.sp->pc.pc8.hi = ((uint16_t)_aos_task_launcher) & 0xff;
 
-	// mark as suspended
-	aos_task_state_set(cb, AOS_TASK_SUSPENDED);
 
 	return cb;
 }
@@ -164,15 +149,17 @@ void aos_task_state_set(struct task_cb *a_task, uint8_t a_state) {
 
 __attribute__((naked))
 static void _aos_task_launcher(void) {
-	printf("Inside aos task launcher.\n");
-  __asm__ volatile ("movw   r24, r4");
-  __asm__ volatile ("movw   r30, r2");
+	//printf("Inside aos task launcher.\n");
+
+  __asm__ volatile ("movw  r24, r4");
+  __asm__ volatile ("movw  r30, r2");
 
 	//printf("r30: %s\n");
-	printf("right before icall.\n");
+	//printf("right before icall.\n");
   __asm__ volatile ("icall");
+	//__asm__ volatile ("call task1");
   // task is running now
-	printf("after icall.\n");
+	//printf("after icall.\n");
   __asm__ volatile ("call _aos_task_exit");
 }
 

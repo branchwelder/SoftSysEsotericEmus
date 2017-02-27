@@ -12,13 +12,15 @@ struct task_cb *task1_ptr = NULL;
 void task1(void *a_data UNUSED) {
 	while (1) {
 		printf("Task 1\n");
+		_delay_ms(200);
 	}
 }
 
 
 void task2(void *a_data UNUSED) {
 	while (1) {
-		printf("Task 2\n");
+		printf("Task 2222\n");
+		_delay_ms(200);
 	}
 }
 
