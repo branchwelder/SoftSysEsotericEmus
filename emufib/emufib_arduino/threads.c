@@ -18,7 +18,7 @@
 
 /* THREAD DEFS */
 #define MAX_THREADS 10
-#define THREAD_STACK (1024*1024)
+#define THREAD_STACK (64*64)
 #define ASM_PREFIX ""
 
 typedef struct
@@ -173,68 +173,92 @@ void destroyThread() {
 
 /* DEFINE ARCHITECTURE PARAMS */
 /* REPLACE WITH ARDUINO VERSION */
-asm(".globl " ASM_PREFIX "asm_call_thread_exit\n"
+
+__asm__ (".globl " ASM_PREFIX "asm_call_thread_exit\n"
 ASM_PREFIX "asm_call_thread_exit:\n"
 /*"\t.type asm_call_thread_exit, @function\n"*/
-"\tcall " ASM_PREFIX "destroyThread\n");
+"\tcall " ASM_PREFIX "destroyThread\n"
 
-
-#ifdef __x86_64
-/* arguments in rdi, rsi, rdx */
-asm(".globl " ASM_PREFIX "asm_switch\n"
+".globl " ASM_PREFIX "asm_switch\n"
 ASM_PREFIX "asm_switch:\n"
-#ifndef __APPLE__
-"\t.type asm_switch, @function\n"
-#endif
+"\t.type asm_switch, @function\n");
+
 /* Move return value into rax */
-"\tmovq %rdx, %rax\n"
+__asm__ ("movw  r24, r4");
+__asm__ ("movw  r30, r2");
 
 /* save registers: rbx rbp r12 r13 r14 r15 (rsp into structure) */
-"\tpushq %rbx\n"
-"\tpushq %rbp\n"
-"\tpushq %r12\n"
-"\tpushq %r13\n"
-"\tpushq %r14\n"
-"\tpushq %r15\n"
-"\tmovq %rsp, (%rsi)\n"
+__asm__ ("\tpush r31\n"
+"\tin r31, 0x3f\n"
+"\tpush r31\n"
+"\tpush r30\n"
+"\tpush r29\n"
+"\tpush r28\n"
+"\tpush r27\n"
+"\tpush r26\n"
+"\tpush r25\n"
+"\tpush r24\n"
+"\tpush r23\n"
+"\tpush r22\n"
+"\tpush r21\n"
+"\tpush r20\n"
+"\tpush r19\n"
+"\tpush r18\n"
+"\tpush r17\n"
+"\tpush r16\n"
+"\tpush r15\n"
+"\tpush r14\n"
+"\tpush r13\n"
+"\tpush r12\n"
+"\tpush r11\n"
+"\tpush r10\n"
+"\tpush r9\n"
+"\tpush r8\n"
+"\tpush r7\n"
+"\tpush r6\n"
+"\tpush r5\n"
+"\tpush r4\n"
+"\tpush r3\n"
+"\tpush r2\n"
+"\tpush r1\n"
+"\tclr r1\n"
+"\tpush r0\n");
 
 /* restore registers */
-"\tmovq (%rdi), %rsp\n"
-"\tpopq %r15\n"
-"\tpopq %r14\n"
-"\tpopq %r13\n"
-"\tpopq %r12\n"
-"\tpopq %rbp\n"
-"\tpopq %rbx\n"
+__asm__ ("\tpop r0\n"
+"\tpop r1\n"
+"\tpop r2\n"
+"\tpop r3\n"
+"\tpop r4\n"
+"\tpop r5\n"
+"\tpop r6\n"
+"\tpop r7\n"
+"\tpop r8\n"
+"\tpop r9\n"
+"\tpop r10\n"
+"\tpop r11\n"
+"\tpop r12\n"
+"\tpop r13\n"
+"\tpop r14\n"
+"\tpop r15\n"
+"\tpop r16\n"
+"\tpop r17\n"
+"\tpop r18\n"
+"\tpop r19\n"
+"\tpop r20\n"
+"\tpop r21\n"
+"\tpop r22\n"
+"\tpop r23\n"
+"\tpop r24\n"
+"\tpop r25\n"
+"\tpop r26\n"
+"\tpop r27\n"
+"\tpop r28\n"
+"\tpop r29\n"
+"\tpop r30\n"
+"\tpop r31\n"
+"\tout 0x3f, r31\n"
+"\tpop r31\n"
 
 /* return to the "next" thread */
 "\tret\n");
-#else
-/* static int asm_switch(thread* next, thread* current, int return_value); */
-asm(".globl " ASM_PREFIX "asm_switch\n"
-ASM_PREFIX "asm_switch:\n"
-#ifndef __APPLE__
-"\t.type asm_switch, @function\n"
-#endif
-/* Move return value into eax, current pointer into ecx, next pointer into edx */
-"\tmov 12(%esp), %eax\n"
-"\tmov 8(%esp), %ecx\n"
-"\tmov 4(%esp), %edx\n"
-
-/* save registers: ebx ebp esi edi (esp into structure) */
-"\tpush %ebx\n"
-"\tpush %ebp\n"
-"\tpush %esi\n"
-"\tpush %edi\n"
-"\tmov %esp, (%ecx)\n"
-
-/* restore registers */
-"\tmov (%edx), %esp\n"
-"\tpop %edi\n"
-"\tpop %esi\n"
-"\tpop %ebp\n"
-"\tpop %ebx\n"
-
-/* return to the "next" thread with eax set to return_value */
-"\tret\n");
-#endif

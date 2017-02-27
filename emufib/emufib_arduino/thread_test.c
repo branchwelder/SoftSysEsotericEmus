@@ -1,7 +1,7 @@
 /*
 * emufib Threading Library
 * thread_test.c
-* 
+*
 * Test the functionality of the emufib threading library
 */
 
