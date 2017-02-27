@@ -29,7 +29,7 @@ Hannah Twigg-Smith, Emma Price, Kathryn Hite
 
 `$ sudo apt-get install gcc-avr binutils-avr gdb-avr avr-libc avrdude`
 
-Alternatively, you can navigate to the `libraries/avr-libc-1.8.1` and run
+Alternatively, you can navigate to the `libraries/avr-libc-1.8.1` directory and run
 
 ```
 $ ./configure --prefix=$PREFIX --build=`./config.guess` --host=avr
