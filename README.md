@@ -13,17 +13,20 @@ Multithreading can be applicable in many programming applications and is well re
 
 ### Implementation
 
-What specifically did you accomplish with this project? Within the context of the problem space, enumerate the potential options and explain why you chose what you did. Describe what makes it interesting/challenging, and how you overcame those challenges. Explain your implementation and design decisions with sufficient detail for a technical audience to understand it.
-
 **Threading Library**
+About the C background functions
 
 **Arduino Memory Architecture**
+Arudino memory
 
 **Library Structure**
+Putting it all together
 
 **Use**
+Use cases
 
 **Challenges and Future Work**
+Next up
 
 
 ### Results
