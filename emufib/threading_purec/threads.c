@@ -2,7 +2,7 @@
 * emufib Threading Library
 * threads.c
 *
-* Handle thread functions: init, create, yield, destroy
+* Handle basic threading functions: init, create, yield, destroy
 */
 
 
@@ -28,6 +28,7 @@ typedef struct
 	int active;
 } thread;
 
+
 /* THREAD PARAMS */
 /* Queue of threads to init */
 static thread threadList[ MAX_THREADS ];
@@ -46,8 +47,16 @@ extern int asm_switch(thread* next, thread* current, int return_value);
 static void initStack(thread* thread, int stack_size, void (*fptr)(void));
 extern void* asm_call_thread_exit;
 
+
 /* THREAD FUNCTIONS */
-/* Create Stacks */
+
+/* 
+* createStack 
+* 
+* Allocates a new stack in memory.  
+* Takes in a pointer to the appropriate thread id, the size of the stack to be 
+* allocated, and a pointer to the task function for the thread.
+*/
 static void createStack(thread* thread, int stack_size, void (*fptr)(void)) {
 	int i;
 
@@ -70,7 +79,12 @@ static void createStack(thread* thread, int stack_size, void (*fptr)(void)) {
 	}
 }
 
-// Init Threads
+/* 
+* initThreads 
+* 
+* Initializes the thread list and the main thread.  Call this before creating any
+* threads.
+*/
 void initThreads()
 {
 	memset(threadList, 0, sizeof(threadList));
@@ -79,7 +93,13 @@ void initThreads()
 	printf ("Initialized successfully.\n");
 }
 
-// Create Threads
+/*
+* createThread
+*
+* Pass in a pointer to a task function to create a new thread.  Switches contexts and 
+* creates the appropriate stack in memory, adding to the thread list.
+*/
+
 int createThread( void (*func)(void) )
 {
 	if ( numThreads == MAX_THREADS ) return 1; /* Max threads error */
@@ -97,7 +117,15 @@ int createThread( void (*func)(void) )
 	return 0; /* No error */
 }
 
-/* Context switching: REPLACE WITH ARDUINO VERSION */
+
+/*
+* threadYield
+* 
+* Provides context switching between threads.
+* If currently in a thread, it will switch to the main context.  Otherwise, it will
+* save the current state and switch in a new thread to the main context.
+*/
+
 void threadYield()
 {
 	/* If we are in a thread, switch to the main process */
@@ -108,12 +136,12 @@ void threadYield()
 
 		asm_switch( &mainThread, &threadList[currentThread], 0 );
 	}
-	/* Else, we are in the main process and we need to dispatch a new fiber */
+	/* Else, we are in the main process and we need to dispatch a new thread */
 	else
 	{
 		if ( numThreads == 0 ) return;
 
-		/* Saved the state so call the next fiber */
+		/* Saved the state so can call the next fiber */
 		currentThread = (currentThread + 1) % numThreads;
 
 		printf( "Switching to thread %d. \n", currentThread );
@@ -141,7 +169,11 @@ void threadYield()
 	return;
 }
 
-/* Let threads run after creation */
+/* 
+* waitForAllThreads 
+*
+* Run and yield all threads until the processess finish. 
+*/
 int waitForAllThreads()
 {
 	int threadsRemaining = 0;
@@ -160,7 +192,12 @@ int waitForAllThreads()
 	return 0;
 }
 
-// Destroy Threads
+
+/*
+* destroyThread
+*
+* Switch to the main context and destroy threads when the thread list reaches 0.
+*/
 void destroyThread() {
 	assert( inThread );
 	assert( 0 <= currentThread && currentThread < numThreads );
@@ -172,7 +209,7 @@ void destroyThread() {
 }
 
 /* DEFINE ARCHITECTURE PARAMS */
-/* REPLACE WITH ARDUINO VERSION */
+/* THIS IS NOT THE ARDUINO VERSION */
 asm(".globl " ASM_PREFIX "asm_call_thread_exit\n"
 ASM_PREFIX "asm_call_thread_exit:\n"
 /*"\t.type asm_call_thread_exit, @function\n"*/
