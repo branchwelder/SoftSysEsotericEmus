@@ -9,7 +9,7 @@ This covers all of the basic thread functions found in the [PThread](https://com
 
 **Background**
 
-Provide context for your project by describing the broader space in which it is situated. This section will likely draw upon your annotated bibliography. You've already collected this knowledge and shown us you understand it, now frame it for an external audience.
+Multithreading can be applicable in many programming applications and is well represented and documented in the C programming language.  However, because the Arduino does not come loaded with an operating system, standard threading functionality can be difficult to implement.  Though it is common to apply "protothreading" to an Arduino program (using timers to control program flow and transition between operations), the emufib library makes it easy to utilize a multithreading implementation that emulates threading on a normal machine.  By creating stacks for each process within memory and accessing the registers on the atmel microcontroller, emufib mimics multithreading and provides the same performance.
 
 **Implementation**
 
