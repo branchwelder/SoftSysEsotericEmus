@@ -15,7 +15,23 @@ Multithreading can be applicable in many programming applications and is well re
 
 **Threading Library**
 
-About the C background functions
+The background threading library is a simple implementation of PThread based off of the libfiber library available [here](https://github.com/brianwatling/libfiber).  Each of the functions in `threads.c` are commented with their functionality and also listed below for an overview of what you can do with the library.
+
+* `void createStack(thread* thread, int stack_size, void (*fptr)(void))`: Allocates a new stack in memory.  Takes in a pointer to the appropriate thread it, the size of the stack to be allocated, and a pointer to the task function for the thread.  This takes care of the memory allocation for our threads.
+
+* `void initThreads()`: This will initialize the thread list and the main thread.  Call this before creating any threads.
+
+* `int createThread( void (*func)(void) )`: Pass in a pointer to a task function to create a new thread.  Switches contexts and creates the appropriate stack in memory, adding to the thread list.
+
+* `void threadYield()`: Provides context switching between threads. If currently in a thread, it will switch to the main context.  Otherwise it will save the current state and switch in a new thread to the main context.
+
+* `int waitForAllThreads()`: Run and yield all threads until the processes finish.
+
+* `void destroyThread()`: Switch to the main context and destroy threads when the thread list reaches 0.
+
+When using these functions, stacks are allocated in memory using assembly for the specific architecture specified by the file.  We call `initThreads()` to intialize the list of threads and then create threads for defined task functions.  When threads are created, a stack is allocated in memory for each.  Then `waitForAllThreads` handles switching between the active threads in the thread list, executing the code in parallel.  Destroying threads is then required when threads exit to remove them from the thread list.
+
+`thread_test.c` provides a very simple example to master the concept of the threading functions.  Running the example is documented in the [README](https://github.com/hannahtwiggsmith/SoftSysEsotericEmus/blob/master/README.md).
 
 **Arduino Memory Architecture**
 
