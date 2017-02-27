@@ -5,7 +5,7 @@ Emufib is a threading library developed to run on an Arduino architecture.  The 
 * yield()
 * destroy()
 
-This covers all of the basic thread functions found in the [PThread](https://computing.llnl.gov/tutorials/pthreads/) library commonly used in C applications.  Along with the library files, the emufib repository also includes several different threading demos on both Arduino and standard machine architectures.  To install the library and run these demonstrations, follow the instructions provided in the repository README file.
+This covers all of the basic thread functions found in the [PThread](https://computing.llnl.gov/tutorials/pthreads/) library commonly used in C applications.  Along with the library files, the emufib repository also includes several different threading demos on both Arduino and standard machine architectures.  To install the library and run these demonstrations, follow the instructions provided in the repository [README](https://github.com/hannahtwiggsmith/SoftSysEsotericEmus/blob/master/README.md) file.
 
 ### Background
 
@@ -35,7 +35,9 @@ When using these functions, stacks are allocated in memory using assembly for th
 
 **Arduino Memory Architecture**
 
-With the basic threading library in place for the architecture of a laptop running Ubuntu, applying this to the Arduino architecture requires only updating the assembly code to write to the correct registers and allocate stacks with the correct size.
+With the basic threading library in place for the architecture of a laptop running Ubuntu, applying this to the Arduino architecture requires updating the assembly code to write to the correct registers and allocate stacks with the correct size.
+
+PUT STUFF HERE
 
 **Library Structure**
 
@@ -53,7 +55,7 @@ Some common use cases for threading that may be applicable on the Arduino are:
 
 **Future Additions**
 
-The current library works on the Arduino with basic threading functionality.  This could be expanded to include common mutex capabilities.  In the PThread library, these functions include init, destroy, lock, and unlock.  Mutex functionality would allow locking threads to ensure that reading and writing variables happened in a controlled way.
+The current library works on the Arduino with basic threading functionality.  This could be expanded to include other common threading capabilities including mutexes.  In the PThread library, these functions include init, destroy, lock, and unlock.  Mutex functionality would allow locking threads to ensure that reading and writing variables happened in a controlled way.
 
 
 ### Results
