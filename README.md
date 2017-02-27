@@ -15,7 +15,7 @@ All of the instructions for both running the example code and integrating emufib
 
 **Project Website**
 
-For more background, videos, and examples, check out the project site [here](https://hannahtwiggsmith.github.io/SoftSysEsotericEmus/).
+For more background, videos, and examples beyond the installation and usage instructions below, check out the project site [here](https://hannahtwiggsmith.github.io/SoftSysEsotericEmus/).
 
 ## Authors
 
@@ -43,13 +43,13 @@ To test the serial connection to the Arduino in C, navigate to the `emufib/seria
 
 `$ make && make install`
 
-Note that you may need to change the Arduino port definition in the Makefile to match the one on your machine. The port definition will be different for different machines and may include `ACM`, `COM`, or `usbmotem`. 
+Note that you may need to change the Arduino port definition in the Makefile to match the one on your machine. The port definition will be different for different machines and may include `ACM`, `COM`, or `usbmotem`.  You can check the port names on your machine using the `port.sh` file in the `emufib` directory by running `./ports.sh`.
 
 ## Usage
 
 ### Arduino Test
 
-The `emufib/threading_arduino` directory contains the source code for the threading library as well as a test file running multiple parallel tasks.  Follow the instructions below to upload the test to your Arduino.  Again, ensure that the Arduino port listed in the Makefile matches the one on your machine.  Mine was `/dev/cu.usbmodem1411`, so you will replace this in the final two commands below as well.  
+The `emufib/emufib_arduino` directory contains the source code for the threading library as well as a test file running multiple parallel tasks.  Follow the instructions below to upload the test to your Arduino.  Again, ensure that the Arduino port listed in the Makefile matches the one on your machine.  Mine was `/dev/cu.usbmodem1411`, so you will replace this in the final two commands below as well.  
 
 
 ```
@@ -60,7 +60,7 @@ $ screen /dev/cu.usbmodem1411
 
 ### Using emufib in Your Arduino C Application
 
-To create a new C application utilizing the library, copy the `emu.c` and `emu.h` files from `emufib/threading_arduino` into your project directory.  Be sure to include `emu.h` in the C file where you are using Arduino threading.  Then compile your project with the following commands, replacing `test` with your filename and `/dev/ttyACM0` with your Arduino port:
+To create a new C application utilizing the library, copy the `emu.c` and `emu.h` files from `emufib/emufib_arduino` into your project directory.  Be sure to include `emu.h` in the C file where you are using Arduino threading.  Then compile your project with the following commands, replacing `test` with your filename and `/dev/ttyACM0` with your Arduino port:
 
 ```
 $ avr-gcc -Os -DF_CPU=16000000UL -mmcu=atmega328p -c -o test.o test.c
@@ -73,7 +73,7 @@ These tests were run using an Arduino Uno r3.  If you are using a different Ardu
 
 ### Standalone Usage
 
-The emufib library can also be used on normal machine architecture by using the `threads.c` and `utils.h` from the `emufib/threading_purec` directory.  Copy the files to your project directory (again including `emu.c` in your C file).  This will give you the standard PThread functionality.  You can also run `./thread_test` in the `purec` directory to run the executable and test the threading capabilities.
+The emufib library can also be used on normal machine architecture by using the `threads.c` and `utils.h` from the `emufib/emufib_purec` directory.  Copy the files to your project directory (again including `emu.c` in your C file).  This will give you the standard PThread functionality.  You can also run `./thread_test` in the `purec` directory to run the executable and test the threading capabilities.
 
 ## License
 
