@@ -17,13 +17,21 @@ What specifically did you accomplish with this project? Within the context of th
 
 **Results**
 
-Provide evidence demonstrating that what you built works. Though the details will be different for each project, screenshots and video are likely helpful. Include graphs or other data if appropriate.
+The pure C version of the library works as expected, switching between threads correctly as indicated in the example.  The pure C library can be used to show that the background threading functionality is correctly implemented before porting to the Arduino architecture.  Basic PThread functionality is included, so the files can also be used as a lightwight threading option for C projects.
 
-![Pure C Demo](./images/thread_test.png "The pure C version of the library works as expected, switching between threads correctly as indicated in the example.")
+![Pure C Demo](./images/thread_test.png)
 
-![Serial Demo](./images/serial.jpg "To debug the Arduino, it is possible to open up a serial connection using the provided C library.")
+To debug the Arduino, it is possible to open up a serial connection using the provided C library as described in the README.  However, this can negatively alter the threading registers and create memory problems, so it is not recommended as a debugging method within threads.
 
-![Arduino Demo](./images/emufib.png "The Arduino test setup allows debugging via LED lights to prevent serial print statements from altering thread registers in the program.")
+![Serial Demo](./images/serial.jpg)
+
+The Arduino test setup allows debugging via LED lights to prevent serial print statements from altering thread registers in the program.  Writing to an LED is fast and simple in assembly, and example write commands can be found in the test files.
+
+![Arduino Demo](./images/emufib.png)
+
+The final Arduino test video below shows two LEDs successfully running on parallel threads to blink at different rates.  This 
+
+FINAL VIDEO HERE
 
 **Project Authors**
 
