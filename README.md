@@ -35,19 +35,25 @@ When using these functions, stacks are allocated in memory using assembly for th
 
 **Arduino Memory Architecture**
 
-With the basic threading library in place for the architecture of a laptop running Ubuntu, applying this to the Arduino architecture requires only updating the assembly code to write to the correct registers.
+With the basic threading library in place for the architecture of a laptop running Ubuntu, applying this to the Arduino architecture requires only updating the assembly code to write to the correct registers and allocate stacks with the correct size.
 
 **Library Structure**
 
-Putting it all together
+The library can now be used for either a pure C application or as a way to run threading in C on the Arduino.  These two functionalities are split within the project directories as described in the [README](https://github.com/hannahtwiggsmith/SoftSysEsotericEmus/blob/master/README.md).
 
 **Use**
 
-Use cases
+Some common use cases for threading that may be applicable on the Arduino are:
 
-**Challenges and Future Work**
+* Running motors simultaneously at different speeds
+* Reading from multiple sensor streams
+* Running simultaneous input and output processes
+* Avoiding long wait times between parts of the arduino loop
+* Any other normal multithreading computation case
 
-Next up
+**Future Additions**
+
+The current library works on the Arduino with basic threading functionality.  This could be expanded to include common mutex capabilities.  In the PThread library, these functions include init, destroy, lock, and unlock.  Mutex functionality would allow locking threads to ensure that reading and writing variables happened in a controlled way.
 
 
 ### Results
@@ -64,7 +70,7 @@ The Arduino test setup allows debugging via LED lights to prevent serial print s
 
 ![Arduino Demo](./images/emufib.png)
 
-The final Arduino test video below shows two LEDs successfully running on parallel threads to blink at different rates.  This 
+The final Arduino test video below shows two LEDs successfully running on parallel threads to blink in an alternating pattern between the threads.  
 
 FINAL VIDEO HERE
 
