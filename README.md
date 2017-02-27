@@ -72,7 +72,7 @@ A simple Arduino test setup allows debugging via LED lights to prevent serial pr
 
 ![Arduino Test Setup](./images/test_setup.jpg)
 
-The final Arduino test video below shows two LEDs successfully running on parallel threads to blink in an alternating pattern between the threads.
+The final Arduino test video below shows two LEDs successfully running on parallel threads to blink in an alternating pattern between the threads.  This occurs after several blinks to indicate proper stack allocation and register writes.
 
 FINAL VIDEO HERE
 
