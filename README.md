@@ -15,7 +15,7 @@ All of the instructions for both running the example code and integrating emufib
 
 **Project Website**
 
-For more background, videos, and examples, check out the project site [here](https://hannahtwiggsmith.github.io/SoftSysEsotericEmus/).
+For more background, videos, and examples beyond the installation and usage instructions below, check out the project site [here](https://hannahtwiggsmith.github.io/SoftSysEsotericEmus/).
 
 ## Authors
 
