@@ -64,7 +64,7 @@ The pure C version of the library works as expected, switching between threads c
 
 ![Pure C Demo](./images/thread_test.png)
 
-To debug the Arduino, it is possible to open up a serial connection using the provided C library as described in the README.  However, this can negatively alter the threading registers and create memory problems, so it is not recommended as a debugging method within threads.
+To debug the Arduino, it is possible to open up a serial connection using the provided C library as described in the [README](https://github.com/hannahtwiggsmith/SoftSysEsotericEmus/blob/master/README.md).  However, this can negatively alter the threading registers and create memory problems, so it is not recommended as a debugging method within threads.
 
 ![Arduino Serial Demo](./images/serial.jpg)
 
