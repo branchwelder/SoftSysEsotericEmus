@@ -49,7 +49,7 @@ Note that you may need to change the Arduino port definition in the Makefile to 
 
 ### Arduino Test
 
-The `emufib/threading_arduino` directory contains the source code for the threading library as well as a test file running multiple parallel tasks.  Follow the instructions below to upload the test to your Arduino.  Again, ensure that the Arduino port listed in the Makefile matches the one on your machine.  Mine was `/dev/cu.usbmodem1411`, so you will replace this in the final two commands below as well.  
+The `emufib/emufib_arduino` directory contains the source code for the threading library as well as a test file running multiple parallel tasks.  Follow the instructions below to upload the test to your Arduino.  Again, ensure that the Arduino port listed in the Makefile matches the one on your machine.  Mine was `/dev/cu.usbmodem1411`, so you will replace this in the final two commands below as well.  
 
 
 ```
@@ -60,7 +60,7 @@ $ screen /dev/cu.usbmodem1411
 
 ### Using emufib in Your Arduino C Application
 
-To create a new C application utilizing the library, copy the `emu.c` and `emu.h` files from `emufib/threading_arduino` into your project directory.  Be sure to include `emu.h` in the C file where you are using Arduino threading.  Then compile your project with the following commands, replacing `test` with your filename and `/dev/ttyACM0` with your Arduino port:
+To create a new C application utilizing the library, copy the `emu.c` and `emu.h` files from `emufib/emufib_arduino` into your project directory.  Be sure to include `emu.h` in the C file where you are using Arduino threading.  Then compile your project with the following commands, replacing `test` with your filename and `/dev/ttyACM0` with your Arduino port:
 
 ```
 $ avr-gcc -Os -DF_CPU=16000000UL -mmcu=atmega328p -c -o test.o test.c
