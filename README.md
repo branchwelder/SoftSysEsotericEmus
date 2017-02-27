@@ -7,15 +7,26 @@ Emufib is a threading library developed to run on an Arduino architecture.  The 
 
 This covers all of the basic thread functions found in the [PThread](https://computing.llnl.gov/tutorials/pthreads/) library commonly used in C applications.  Along with the library files, the emufib repository also includes several different threading demos on both Arduino and standard machine architectures.  To install the library and run these demonstrations, follow the instructions provided in the repository README file.
 
-**Background**
+### Background
 
-Multithreading can be applicable in many programming applications and is well represented and documented in the C programming language.  However, because the Arduino does not come loaded with an operating system, standard threading functionality can be difficult to implement.  Though it is common to apply "protothreading" to an Arduino program (using timers to control program flow and transition between operations), the emufib library makes it easy to utilize a multithreading implementation that emulates threading on a normal machine.  By creating stacks for each process within memory and accessing the registers on the atmel microcontroller, emufib mimics multithreading and provides the same performance.
+Multithreading can be applicable in many programming applications and is well represented and documented in the C programming language.  However, because the Arduino does not come loaded with an operating system, standard threading functionality can be difficult to implement.  Though it is common to apply "protothreading" to an Arduino program (using timers to control program flow and transition between operations), the emufib library makes it easy to utilize a multithreading implementation that emulates threading on a normal machine.  By creating stacks for each process within memory and accessing the registers on the atmel microcontroller, emufib mimics multithreading and provides the same performance.  This allows a user to compile pure C onto the Arduino with threading provided.
 
-**Implementation**
+### Implementation
 
 What specifically did you accomplish with this project? Within the context of the problem space, enumerate the potential options and explain why you chose what you did. Describe what makes it interesting/challenging, and how you overcame those challenges. Explain your implementation and design decisions with sufficient detail for a technical audience to understand it.
 
-**Results**
+**Threading Library**
+
+**Arduino Memory Architecture**
+
+**Library Structure**
+
+**Use**
+
+**Challenges and Future Work**
+
+
+### Results
 
 The pure C version of the library works as expected, switching between threads correctly as indicated in the example.  The pure C library can be used to show that the background threading functionality is correctly implemented before porting to the Arduino architecture.  Basic PThread functionality is included, so the files can also be used as a lightwight threading option for C projects.
 
@@ -32,6 +43,8 @@ The Arduino test setup allows debugging via LED lights to prevent serial print s
 The final Arduino test video below shows two LEDs successfully running on parallel threads to blink at different rates.  This 
 
 FINAL VIDEO HERE
+
+### Project Information
 
 **Project Authors**
 
