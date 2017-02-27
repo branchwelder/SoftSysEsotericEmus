@@ -14,18 +14,23 @@ Multithreading can be applicable in many programming applications and is well re
 ### Implementation
 
 **Threading Library**
+
 About the C background functions
 
 **Arduino Memory Architecture**
+
 Arudino memory
 
 **Library Structure**
+
 Putting it all together
 
 **Use**
+
 Use cases
 
 **Challenges and Future Work**
+
 Next up
 
 
