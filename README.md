@@ -21,7 +21,15 @@ Hannah Twigg-Smith, Emma Price, Kathryn Hite
 
 [AVR LibC](http://www.nongnu.org/avr-libc/) is required to compile C code on to the Arduino.  To install, run
 
-`$ sudo apt-get install avr-libc`
+`$ sudo apt-get install gcc-avr binutils-avr gdb-avr avr-libc avrdude`
+
+Alternatively, you can navigate to the `Arduino/avr-libc-1.8.1` and run
+
+```
+$ ./configure --prefix=$PREFIX --build=`./config.guess` --host=avr
+$ make
+$ make install
+```
 
 ### Running the Serial Test
 
