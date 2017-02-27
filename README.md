@@ -15,7 +15,7 @@ Multithreading can be applicable in many programming applications and is well re
 
 **Threading Library**
 
-The background threading library is a simple implementation of PThread based off of the libfiber library available [here](https://github.com/brianwatling/libfiber).  Each of the functions in `threads.c` are commented with their functionality and also listed below for an overview of what you can do with the library.
+The background threading library is a simple implementation of PThread based off of the libfiber library available [here](https://github.com/brianwatling/libfiber).  Each of the functions in `emufib/emufib_purec/threads.c` are commented with their functionality and also listed below for an overview of what you can do with the library.
 
 * `void createStack(thread* thread, int stack_size, void (*fptr)(void))`: Allocates a new stack in memory.  Takes in a pointer to the appropriate thread it, the size of the stack to be allocated, and a pointer to the task function for the thread.  This takes care of the memory allocation for our threads.
 
@@ -35,7 +35,7 @@ When using these functions, stacks are allocated in memory using assembly for th
 
 **Arduino Memory Architecture**
 
-Arudino memory
+With the basic threading library in place for the architecture of a laptop running Ubuntu, applying this to the Arduino architecture requires only updating the assembly code to write to the correct registers.
 
 **Library Structure**
 
