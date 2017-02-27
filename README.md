@@ -1,5 +1,78 @@
 # EsotericEmus
-This is the repository for the SoftSysSp17 team Esoteric Emus. We are creating an Arduino threading library.
 
-## Installation Instructions
-Blah
+## Description
+
+Emufib is a threading library developed to run threading on an Arduino.
+
+## Authors
+
+Hannah Twigg-Smith, Emma Price, Kathryn Hite
+
+## Getting Started
+
+### Required libraries
+
+AVR LibC is required to compile C code on to the Arduino.  To install, run
+
+`$ sudo apt-get install avr-libc`
+
+### Running the Serial Test
+
+To test the serial connection to the Arduino in C, navigate to the `emufib/serial_test directory` and run
+
+`$ make && make install`
+
+Note that you may need to change the Arduino port definition in the Makefile to match the one on your machine. The port definition will be different for different machines and may include `ACM`, `COM`, or `usbmotem`. 
+
+## Usage
+
+### Existing Test
+
+The `emufib/threading` directory contains the source code for the threading library as well as a test file running multiple parallel tasks.  Follow the instructions below to upload the test to your Arduino.  Again, ensure that the Arduino port listed in the Makefile matches the one on your machine.  Mine was `/dev/cu.usbmodem1411`, so you will replace this in the final two commands below as well.  
+
+
+```
+$ make
+$ avrdude -F -V -c arduino -p ATMEGA328P -P /dev/cu.usbmodem1411 -b 115200 -U flash:w:test.hex
+$ screen /dev/cu.usbmodem1411
+```
+
+
+### Using emufib in Your C Application
+
+To create a new C application utilizing the library, copy the `emu.c` and `emu.h` files into your project directory.  Be sure to include `emu.h` in the C file where you are using Arduino threading.  Then compile your project with the following commands, replacing `test` with your filename and `/dev/ttyACM0` with your Arduino port:
+
+```
+$ avr-gcc -Os -DF_CPU=16000000UL -mmcu=atmega328p -c -o test.o test.c
+$ avr-gcc -mmcu=atmega328p test.o -o test
+$ avr-objcopy -O ihex -R .eeprom test test.hex
+$ avrdude -F -V -c arduino -p ATMEGA328P -P /dev/ttyACM0 -b 115200 -U flash:w:test.hex
+```
+
+These tests were run using an Arduino Uno r3.  If you are using a different Arduino, you may need to change ATMEGA328P in the second and fourth commands to match the chip on your model.
+
+
+## License
+
+MIT License
+
+Copyright (c) 2017 Hannah Twigg-Smith, Emma Price, Kathryn Hite
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
