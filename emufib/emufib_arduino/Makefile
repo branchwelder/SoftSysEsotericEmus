@@ -12,7 +12,7 @@ MCU=atmega328p
 CFLAGS=-I. -I$(PCA_PREFIX)/include/ -Wall -Os -DF_CPU=16000000UL -std=c99
 LDFLAGS=-lpca -L$(PCA_PREFIX)
 
-ISPPORT=/dev/cu.usbmodem1411
+ISPPORT=/dev/tty/acm0
 ISPDIR=/usr/local/bin
 ISP=$(ISPDIR)/avrdude
 ISPFLAGS=-c arduino -p $(MCU) -P $(ISPPORT) -b 115200 -C $(ISPDIR)/avrdude.conf
