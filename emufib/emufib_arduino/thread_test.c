@@ -6,7 +6,7 @@
 */
 
 /* Threading library */
-#include "threads.c"
+#include "threads.h"
 
 int up = 0;
 int down = 0;

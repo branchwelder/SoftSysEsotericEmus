@@ -5,32 +5,20 @@
 * Handle thread functions: init, create, yield, destroy
 */
 
-
-
 /* INCLUDES */
 #include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-
-
-/* THREAD DEFS */
-#define MAX_THREADS 10
-#define THREAD_STACK (64*64)
-#define ASM_PREFIX ""
-
-typedef struct
-{
-	void** stack;
-	void* stack_bottom; /* malloc reference */
-	int active;
-} thread;
+#include "pca.h"
+#include <util/delay.h>
+#include "threads.h"
 
 /* THREAD PARAMS */
 /* Queue of threads to init */
-static thread threadList[ MAX_THREADS ];
+
+static thread threadList[];
 /* Current thread */
 static int currentThread = -1;
 /* True if in thread rather than main process */
@@ -41,42 +29,22 @@ static int numThreads = 0;
 /* Init a main thread */
 static thread mainThread;
 
-/* Define context switching functions */
-extern int asm_switch(thread* next, thread* current, int return_value);
-static void initStack(thread* thread, int stack_size, void (*fptr)(void));
-extern void* asm_call_thread_exit;
-
 /* THREAD FUNCTIONS */
-/* Create Stacks */
-static void createStack(thread* thread, int stack_size, void (*fptr)(void)) {
-	int i;
-
-		static const int NUM_REGISTERS = 32;
-
-		assert(stack_size > 0);
-		assert(fptr != NULL);
-
-		/* Create a 16-byte aligned stack which will work on Mac OS X. */
-		assert(stack_size % 16 == 0);
-		thread->stack_bottom = malloc(stack_size);
-		if (thread->stack_bottom == 0) return;
-		thread->stack = (void**)((char*) thread->stack_bottom + stack_size);
-
-	*(--thread->stack) = (void*) ((uintptr_t) &asm_call_thread_exit);
-	*(--thread->stack) = (void*) ((uintptr_t) fptr);
-	/* Init registers with NULL */
-	for (i = 0; i < NUM_REGISTERS; ++i) {
-		*(--thread->stack) = 0;
-	}
-}
-
 // Init Threads
 void initThreads()
 {
+	DDRC = 0x01;
+	PORTC = 0x00;
+	int i = 0;
+
+	while (i<2) {
+		PORTC ^= 0x01;
+		_delay_ms(200);
+		i++;
+	}
 	memset(threadList, 0, sizeof(threadList));
 	mainThread.stack = NULL;
 	mainThread.stack_bottom = NULL;
-	printf ("Initialized successfully.\n");
 }
 
 // Create Threads
@@ -84,11 +52,19 @@ int createThread( void (*func)(void) )
 {
 	if ( numThreads == MAX_THREADS ) return 1; /* Max threads error */
 
+	DDRC = 0x01;
+	PORTC = 0x00;
+	int i = 0;
+
+	while (i<2) {
+		PORTC ^= 0x01;
+		_delay_ms(200);
+		i++;
+	}
+
 	/* Set the context to a new stack */
 	createStack( &threadList[numThreads], THREAD_STACK, func );
-	if ( threadList[numThreads].stack_bottom == 0 )
-	{
-		printf( "Error: Could not allocate stack. \n" );
+	if ( threadList[numThreads].stack_bottom == 0 ){
 		return 2; /* Malloc error */
 	}
 	threadList[numThreads].active = 1;
@@ -104,7 +80,15 @@ void threadYield()
 	if ( inThread )
 	{
 		/* Switch to the main context */
-		printf( "Thread %d yielding the processor. \n", currentThread );
+		DDRC = 0x01;
+		PORTC = 0x00;
+		int i = 0;
+
+		while (i<2) {
+			PORTC ^= 0x01;
+			_delay_ms(200);
+			i++;
+		}
 
 		asm_switch( &mainThread, &threadList[currentThread], 0 );
 	}
@@ -113,18 +97,24 @@ void threadYield()
 	{
 		if ( numThreads == 0 ) return;
 
+		DDRC = 0x01;
+		PORTC = 0x00;
+		int i = 0;
+
+		while (i<2) {
+			PORTC ^= 0x01;
+			_delay_ms(200);
+			i++;
+		}
+
 		/* Saved the state so call the next fiber */
 		currentThread = (currentThread + 1) % numThreads;
-
-		printf( "Switching to thread %d. \n", currentThread );
 		inThread = 1;
 		asm_switch( &threadList[ currentThread ], &mainThread, 0 );
 		inThread = 0;
-		printf( "Thread %d switched to main context. \n", currentThread );
 
 		if ( threadList[currentThread].active == 0 )
 		{
-			printf( "Thread %d is finished. Cleaning up.\n", currentThread );
 			/* Free the "current" fiber's stack pointer */
 			free( threadList[currentThread].stack_bottom );
 
@@ -148,8 +138,6 @@ int waitForAllThreads()
 
 	/* If we are in a fiber, wait for all the *other* fibers to quit */
 	if ( inThread ) threadsRemaining = 1;
-
-	printf( "Waiting until there are only %d threads remaining. \n", threadsRemaining );
 
 	/* Execute the fibers until they quit */
 	while ( numThreads > threadsRemaining )
@@ -177,9 +165,42 @@ void destroyThread() {
 __asm__ (".globl " ASM_PREFIX "asm_call_thread_exit\n"
 ASM_PREFIX "asm_call_thread_exit:\n"
 /*"\t.type asm_call_thread_exit, @function\n"*/
-"\tcall " ASM_PREFIX "destroyThread\n"
+"\tcall " ASM_PREFIX "destroyThread\n");
 
-".globl " ASM_PREFIX "asm_switch\n"
+/* Create Stacks */
+static void createStack(thread* thread, int stack_size, void (*fptr)(void)) {
+
+	DDRB = 0x01;
+	PORTB = 0x00;
+	int j = 0;
+
+	while (j<2) {
+		PORTB ^= 0x01;
+		_delay_ms(200);
+		j++;
+	}
+
+	int i;
+
+		static const int NUM_REGISTERS = 32;
+
+		assert(stack_size > 0);
+		assert(fptr != NULL);
+
+		thread->stack_bottom = malloc(stack_size);
+		if (thread->stack_bottom == 0) return;
+		thread->stack = (void**)((char*) thread->stack_bottom + stack_size);
+
+	*(--thread->stack) = (void*) ((uintptr_t) &asm_call_thread_exit);
+	*(--thread->stack) = (void*) ((uintptr_t) fptr);
+	/* Init registers with NULL */
+	for (i = 0; i < NUM_REGISTERS; ++i) {
+		*(--thread->stack) = 0;
+	}
+}
+
+
+__asm__ (".globl " ASM_PREFIX "asm_switch\n"
 ASM_PREFIX "asm_switch:\n"
 "\t.type asm_switch, @function\n");
 

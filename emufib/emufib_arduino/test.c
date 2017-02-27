@@ -1,25 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "threads.c"
+#include "threads.h"
 
+#include <avr/io.h>
 #include "pca.h"
 #include <util/delay.h>
 
 
 void task1() {
-	while (1) {
-		printf("Task 1\n");
-		_delay_ms(200);
+	DDRC = 0x01;
+	PORTC = 0x00;
+	int i = 0;
+
+	while (i<2) {
+		PORTC ^= 0x01;
+		_delay_ms(1000);
+		i++;
 	}
+	printf("about to yield 1 \n");
 	threadYield();
 }
 
 
 void task2() {
-	while (1) {
-		printf("Task 2222\n");
-		_delay_ms(200);
+	printf("about to yield 2 \n");
+	DDRC = 0x01;
+	PORTC = 0x00;
+	int i = 0;
+	while (i<2) {
+		PORTC ^= 0x01;
+		_delay_ms(1000);
+		i++;
 	}
+	printf("about to yield 2 \n");
 	threadYield();
 }
 
@@ -31,13 +44,17 @@ int main(void) {
 	serial_install_stdio();
 
 	// initialize the system
+	printf("init\n");
 	initThreads();
 
 	// create tasks
-	createThread(&task1);
-	createThread(&task2);
+	printf("create\n");
+	createThread( &task1 );
+	createThread( &task2 );
 
 	waitForAllThreads();
+
+	printf("done\n");
 
 	return 0;
 }
