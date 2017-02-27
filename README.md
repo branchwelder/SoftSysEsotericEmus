@@ -9,7 +9,7 @@ Emufib is a threading library developed to run on an Arduino architecture.  The 
 * yield()
 * destroy()
 
-THe test files include an Arduino threading demo to show the capabilities of emufib including all of the basic PThread functions.  All of the instructions for both running the example code and integrating emufib within your own project can be found below.
+The test files include an Arduino threading demo to show the capabilities of emufib including all of the basic PThread functions.  All of the instructions for both running the example code and integrating emufib within your own project can be found below.
 
 ## Authors
 
