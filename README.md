@@ -43,7 +43,7 @@ To test the serial connection to the Arduino in C, navigate to the `emufib/seria
 
 `$ make && make install`
 
-Note that you may need to change the Arduino port definition in the Makefile to match the one on your machine. The port definition will be different for different machines and may include `ACM`, `COM`, or `usbmotem`. 
+Note that you may need to change the Arduino port definition in the Makefile to match the one on your machine. The port definition will be different for different machines and may include `ACM`, `COM`, or `usbmotem`.  You can check the port names on your machine using the `port.sh` file in the `emufib` directory by running `./ports.sh`.
 
 ## Usage
 
