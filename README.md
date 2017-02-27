@@ -1,5 +1,3 @@
-# EsotericEmus
-
 ## Description
 
 Emufib is a threading library developed to run on an Arduino architecture.  The library provides standard threading capabilities including 
