@@ -69,7 +69,7 @@ These tests were run using an Arduino Uno r3.  If you are using a different Ardu
 
 ### Standalone Usage
 
-The emufib library can also be used on normal machine architecture by using the `threads.c` and `utils.h` from the `emufib/purec` directory.  Copy the files to your project directory (again including `emu.c` in your C file).  This will give you the standard PThread functionality.  You can also run the `threads` executable in the `purec` directory to test the threading capabilities.
+The emufib library can also be used on normal machine architecture by using the `threads.c` and `utils.h` from the `emufib/purec` directory.  Copy the files to your project directory (again including `emu.c` in your C file).  This will give you the standard PThread functionality.  You can also run `./thread_test` in the `purec` directory to run the executable and test the threading capabilities.
 
 ## License
 
