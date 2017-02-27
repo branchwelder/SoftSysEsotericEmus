@@ -2,7 +2,14 @@
 
 ## Description
 
-Emufib is a threading library developed to run threading on an Arduino.
+Emufib is a threading library developed to run on an Arduino architecture.  The library provides standard threading capabilities including 
+
+* init() 
+* create()
+* yield()
+* destroy()
+
+THe test files include an Arduino threading demo to show the capabilities of emufib including all of the basic PThread functions.  All of the instructions for both running the example code and integrating emufib within your own project can be found below.
 
 ## Authors
 
@@ -12,7 +19,7 @@ Hannah Twigg-Smith, Emma Price, Kathryn Hite
 
 ### Required libraries
 
-AVR LibC is required to compile C code on to the Arduino.  To install, run
+[AVR LibC](http://www.nongnu.org/avr-libc/) is required to compile C code on to the Arduino.  To install, run
 
 `$ sudo apt-get install avr-libc`
 
