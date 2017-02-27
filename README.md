@@ -64,13 +64,13 @@ The pure C version of the library works as expected, switching between threads c
 
 To debug the Arduino, it is possible to open up a serial connection using the provided C library as described in the README.  However, this can negatively alter the threading registers and create memory problems, so it is not recommended as a debugging method within threads.
 
-![Serial Demo](./images/serial.jpg)
+![Arduino Serial Demo](./images/serial.jpg)
 
-The Arduino test setup allows debugging via LED lights to prevent serial print statements from altering thread registers in the program.  Writing to an LED is fast and simple in assembly, and example write commands can be found in the test files.
+A simple Arduino test setup allows debugging via LED lights to prevent serial print statements from altering thread registers in the program.  Writing to an LED is fast and simple in assembly, and example write commands can be found in the test files.  LEDs can either represent reaching program states or be written to in a task to show the working functions.
 
-![Arduino Demo](./images/emufib.png)
+![Arduino Test Setup](./images/test_setup.jpg)
 
-The final Arduino test video below shows two LEDs successfully running on parallel threads to blink in an alternating pattern between the threads.  
+The final Arduino test video below shows two LEDs successfully running on parallel threads to blink in an alternating pattern between the threads.
 
 FINAL VIDEO HERE
 
