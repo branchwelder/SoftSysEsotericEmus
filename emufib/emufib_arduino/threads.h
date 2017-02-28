@@ -11,7 +11,7 @@
 
 /* THREAD DEFS */
 #define MAX_THREADS 10
-#define THREAD_STACK (64*64)
+#define THREAD_STACK (32*32)
 #define ASM_PREFIX ""
 
 
@@ -20,12 +20,8 @@ typedef struct
 	void** stack;
 	void* stack_bottom; /* malloc reference */
 	int active;
+  uint8_t reg[32];
 } thread;
-
-typedef struct
-{
-  uint8_t r[32];
-} machineCxt;
 
 
 /* Define context switching functions */

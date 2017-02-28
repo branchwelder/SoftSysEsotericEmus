@@ -24,11 +24,11 @@ void task1() {
 
 void task2() {
 	printf("about to yield 2 \n");
-	DDRC = 0x01;
-	PORTC = 0x00;
+	DDRB = 0x01;
+	PORTB = 0x00;
 	int i = 0;
 	while (i<2) {
-		PORTC ^= 0x01;
+		PORTB ^= 0x01;
 		_delay_ms(1000);
 		i++;
 	}
@@ -46,6 +46,17 @@ int main(void) {
 	// initialize the system
 	printf("init\n");
 	initThreads();
+
+
+		DDRB = 0x01;
+		PORTB = 0x00;
+		int i = 0;
+
+		while (i<2) {
+			PORTB ^= 0x01;
+			_delay_ms(200);
+			i++;
+		}
 
 	// create tasks
 	printf("create\n");
