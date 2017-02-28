@@ -47,6 +47,17 @@ int main(void) {
 	printf("init\n");
 	initThreads();
 
+
+		DDRB = 0x01;
+		PORTB = 0x00;
+		int i = 0;
+
+		while (i<2) {
+			PORTB ^= 0x01;
+			_delay_ms(200);
+			i++;
+		}
+
 	// create tasks
 	printf("create\n");
 	createThread( &task1 );

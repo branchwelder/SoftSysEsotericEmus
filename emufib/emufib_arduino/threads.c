@@ -50,6 +50,17 @@ void initThreads()
 // Create Threads
 int createThread( void (*func)(void) )
 {
+
+		DDRB = 0x01;
+		PORTB = 0x00;
+		int i = 0;
+
+		while (i<2) {
+			PORTB ^= 0x01;
+			_delay_ms(200);
+			i++;
+		}
+		
 	if ( numThreads == MAX_THREADS ) return 1; /* Max threads error */
 	/* Set the context to a new stack */
 	createStack( &threadList[numThreads], THREAD_STACK, func );
@@ -60,15 +71,6 @@ int createThread( void (*func)(void) )
 	threadList[numThreads].active = 1;
 	++ numThreads;
 
-	DDRB = 0x01;
-	PORTB = 0x00;
-	int i = 0;
-
-	while (i<2) {
-		PORTB ^= 0x01;
-		_delay_ms(200);
-		i++;
-	}
 
 	return 0; /* No error */
 }
@@ -152,7 +154,6 @@ ASM_PREFIX "asm_call_thread_exit:\n"
 static void createStack(thread* thread, int stack_size, void (*fptr)(void)) {
 
 	int i;
-	int j;
 
 	static const int NUM_REGISTERS = 32;
 
@@ -172,6 +173,7 @@ static void createStack(thread* thread, int stack_size, void (*fptr)(void)) {
 		*(--thread->stack) = 0;
 		DDRC = 0x01;
 		PORTC = 0x00;
+		int j = 0;
 
 		while (j<2) {
 			PORTC ^= 0x01;
