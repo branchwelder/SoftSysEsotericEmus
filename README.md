@@ -37,7 +37,10 @@ When using these functions, stacks are allocated in memory using assembly for th
 
 With the basic threading library in place for the architecture of a laptop running Ubuntu, applying this to the Arduino architecture requires updating the assembly code to write to the correct registers and allocate stacks with the correct size.
 
-PUT STUFF HERE
+The errors that we ran into probably occurred due to our lack of understanding of Arduino architecture and how to manipulate it with assembly language. When it came to actually implementing context switching on arduino, we weren't sure how to directly push function pointers to the arduino stack (and format the rest of the information) in a way that would allow us to call the function from the assembly. We were able to implement this for our laptop's architecture because we knew how to directly access the registers.
+
+- allocating to the stack (inside of the sram)
+- 
 
 **Library Structure**
 
