@@ -18,7 +18,7 @@
 /* THREAD PARAMS */
 /* Queue of threads to init */
 
-static thread threadList[];
+static thread threadList[MAX_THREADS];
 /* Current thread */
 static int currentThread = -1;
 /* True if in thread rather than main process */
@@ -51,24 +51,24 @@ void initThreads()
 int createThread( void (*func)(void) )
 {
 	if ( numThreads == MAX_THREADS ) return 1; /* Max threads error */
-
-	DDRC = 0x01;
-	PORTC = 0x00;
-	int i = 0;
-
-	while (i<2) {
-		PORTC ^= 0x01;
-		_delay_ms(200);
-		i++;
-	}
-
 	/* Set the context to a new stack */
 	createStack( &threadList[numThreads], THREAD_STACK, func );
 	if ( threadList[numThreads].stack_bottom == 0 ){
 		return 2; /* Malloc error */
+
 	}
 	threadList[numThreads].active = 1;
 	++ numThreads;
+
+	DDRB = 0x01;
+	PORTB = 0x00;
+	int i = 0;
+
+	while (i<2) {
+		PORTB ^= 0x01;
+		_delay_ms(200);
+		i++;
+	}
 
 	return 0; /* No error */
 }
@@ -80,15 +80,6 @@ void threadYield()
 	if ( inThread )
 	{
 		/* Switch to the main context */
-		DDRC = 0x01;
-		PORTC = 0x00;
-		int i = 0;
-
-		while (i<2) {
-			PORTC ^= 0x01;
-			_delay_ms(200);
-			i++;
-		}
 
 		asm_switch( &mainThread, &threadList[currentThread], 0 );
 	}
@@ -96,16 +87,6 @@ void threadYield()
 	else
 	{
 		if ( numThreads == 0 ) return;
-
-		DDRC = 0x01;
-		PORTC = 0x00;
-		int i = 0;
-
-		while (i<2) {
-			PORTC ^= 0x01;
-			_delay_ms(200);
-			i++;
-		}
 
 		/* Saved the state so call the next fiber */
 		currentThread = (currentThread + 1) % numThreads;
@@ -170,34 +151,35 @@ ASM_PREFIX "asm_call_thread_exit:\n"
 /* Create Stacks */
 static void createStack(thread* thread, int stack_size, void (*fptr)(void)) {
 
-	DDRB = 0x01;
-	PORTB = 0x00;
-	int j = 0;
-
-	while (j<2) {
-		PORTB ^= 0x01;
-		_delay_ms(200);
-		j++;
-	}
-
 	int i;
+	int j;
 
-		static const int NUM_REGISTERS = 32;
+	static const int NUM_REGISTERS = 32;
 
-		assert(stack_size > 0);
-		assert(fptr != NULL);
+	assert(stack_size > 0);
+	assert(fptr != NULL);
 
-		thread->stack_bottom = malloc(stack_size);
-		if (thread->stack_bottom == 0) return;
-		thread->stack = (void**)((char*) thread->stack_bottom + stack_size);
+	thread->stack_bottom = malloc(stack_size);
+	if (thread->stack_bottom == 0){
+		return;
+	}
+	thread->stack = (void**)((char*) thread->stack_bottom + stack_size);
 
 	*(--thread->stack) = (void*) ((uintptr_t) &asm_call_thread_exit);
 	*(--thread->stack) = (void*) ((uintptr_t) fptr);
 	/* Init registers with NULL */
 	for (i = 0; i < NUM_REGISTERS; ++i) {
 		*(--thread->stack) = 0;
+		DDRC = 0x01;
+		PORTC = 0x00;
+
+		while (j<2) {
+			PORTC ^= 0x01;
+			_delay_ms(200);
+			j++;
+			}
+		}
 	}
-}
 
 
 __asm__ (".globl " ASM_PREFIX "asm_switch\n"
